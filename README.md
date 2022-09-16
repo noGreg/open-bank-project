@@ -1,4 +1,4 @@
-# obpscaffold
+# open_bank_project
 
 A new Flutter project.
 

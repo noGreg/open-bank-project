@@ -1,7 +1,7 @@
 #!/bin/sh
 # This is a generated file; do not edit or check into version control.
-export "FLUTTER_ROOT=A:\Code\Flutter\flutter"
-export "FLUTTER_APPLICATION_PATH=A:\Code\Flutter\obpscaffold"
+export "FLUTTER_ROOT=/Users/owner/development/flutter"
+export "FLUTTER_APPLICATION_PATH=/Users/owner/Documents/Code/open-bank-project"
 export "COCOAPODS_PARALLEL_CODE_SIGN=true"
 export "FLUTTER_BUILD_DIR=build"
 export "FLUTTER_BUILD_NAME=1.0.0"

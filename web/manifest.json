@@ -1,6 +1,6 @@
 {
-    "name": "obpscaffold",
-    "short_name": "obpscaffold",
+    "name": "open_bank_project",
+    "short_name": "open_bank_project",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

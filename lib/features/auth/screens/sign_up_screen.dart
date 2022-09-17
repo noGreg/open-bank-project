@@ -78,11 +78,16 @@ class SignUpScreen extends StatelessWidget {
   }
 }
 
-class _SignUpForm extends StatelessWidget {
+class _SignUpForm extends StatefulWidget {
   const _SignUpForm({
     Key? key,
   }) : super(key: key);
 
+  @override
+  State<_SignUpForm> createState() => _SignUpFormState();
+}
+
+class _SignUpFormState extends State<_SignUpForm> {
   @override
   Widget build(BuildContext context) {
     final signUpBloc = context.watch<SignUpBloc>();
@@ -131,7 +136,7 @@ class _SignUpForm extends StatelessWidget {
               validator: (password) => password!.isPasswordValid,
             ),
             SizedBox(height: 19.dH),
-            UserTerms(),
+            const UserTerms(),
             SizedBox(height: 38.dH),
             AppBtn(
               label: Strings.signUp,
@@ -143,6 +148,7 @@ class _SignUpForm extends StatelessWidget {
                       final success =
                           await context.read<SignUpBloc>().onSignUpRequest();
                       if (success) {
+                        if (!mounted) return;
                         Navigator.pushReplacementNamed(
                             context, HomeScreen.routeName);
                       } else {

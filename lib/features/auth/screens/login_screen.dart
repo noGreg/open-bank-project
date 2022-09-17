@@ -80,11 +80,16 @@ class LoginScreen extends StatelessWidget {
   }
 }
 
-class _LoginForm extends StatelessWidget {
+class _LoginForm extends StatefulWidget {
   const _LoginForm({
     Key? key,
   }) : super(key: key);
 
+  @override
+  State<_LoginForm> createState() => _LoginFormState();
+}
+
+class _LoginFormState extends State<_LoginForm> {
   @override
   Widget build(BuildContext context) {
     final loginBloc = context.watch<LoginBloc>();
@@ -136,6 +141,7 @@ class _LoginForm extends StatelessWidget {
                       final success =
                           await context.read<LoginBloc>().onLoginRequest();
                       if (success) {
+                        if (!mounted) return;
                         Navigator.pushReplacementNamed(
                             context, HomeScreen.routeName);
                       } else {

@@ -8,7 +8,7 @@ import '../../../core/utils/alerts.dart';
 import '../../home/ui/screens/home_screen.dart';
 import '../bloc/login_bloc.dart';
 
-class GoogleAuthBtn extends StatelessWidget {
+class GoogleAuthBtn extends StatefulWidget {
   const GoogleAuthBtn({
     Key? key,
     required this.loginBloc,
@@ -17,13 +17,19 @@ class GoogleAuthBtn extends StatelessWidget {
 
   final LoginBloc loginBloc;
   final String label;
+
+  @override
+  State<GoogleAuthBtn> createState() => _GoogleAuthBtnState();
+}
+
+class _GoogleAuthBtnState extends State<GoogleAuthBtn> {
   @override
   Widget build(BuildContext context) {
     return OutlinedButton.icon(
       icon:
           const FaIcon(FontAwesomeIcons.google, color: AppColors.primaryColor),
       label: Text(
-        label,
+        widget.label,
         style: TextStyles.blueText,
       ),
       style: OutlinedButton.styleFrom(
@@ -31,7 +37,7 @@ class GoogleAuthBtn extends StatelessWidget {
         minimumSize: const Size(310.0, 53.0),
         side: const BorderSide(color: AppColors.primaryColor),
       ),
-      onPressed: loginBloc.isLoading
+      onPressed: widget.loginBloc.isLoading
           ? null
           : () async {
               FocusScope.of(context).unfocus();
@@ -39,10 +45,11 @@ class GoogleAuthBtn extends StatelessWidget {
               final success =
                   await context.read<LoginBloc>().onLoginWithGoogle();
               if (success) {
+                if (!mounted) return;
                 Navigator.pushReplacementNamed(context, HomeScreen.routeName);
               } else {
                 Alerts.buildScaffoldMessenger(
-                    context: context, text: loginBloc.errorMsg);
+                    context: context, text: widget.loginBloc.errorMsg);
               }
             },
     );

@@ -17,11 +17,11 @@ class AppBtn extends StatelessWidget {
       style: ElevatedButton.styleFrom(
         minimumSize: const Size(310.0, 53.0),
       ),
+      onPressed: onPressed,
       child: Text(
         label,
         style: const TextStyle(fontSize: 16.0),
       ),
-      onPressed: onPressed,
     );
   }
 }

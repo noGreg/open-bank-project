@@ -12,10 +12,15 @@ import '../../../auth/models/user.dart';
 import '../../../auth/screens/login_screen.dart';
 import '../widgets/bottom_tab_selector.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
   static const String routeName = 'profile_screen';
 
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     const appUser = User(id: "id", name: "Juan", email: "juan_perez@gmail.com");
@@ -48,6 +53,7 @@ class ProfileScreen extends StatelessWidget {
               title: Strings.logoutConfirmationMsg,
               onYes: () async {
                 await context.read<AuthBloc>().logOut();
+                if (!mounted) return;
                 Navigator.pushNamedAndRemoveUntil(
                     context, LoginScreen.routeName, (route) => false);
               },
@@ -62,6 +68,7 @@ class ProfileScreen extends StatelessWidget {
               onYes: () async {
                 final result = await context.read<AuthBloc>().deleteAccount();
                 if (result) {
+                  if (!mounted) return;
                   Navigator.pop(context);
                   Alerts.alertDialog(
                     context: context,
@@ -70,6 +77,7 @@ class ProfileScreen extends StatelessWidget {
                         context, LoginScreen.routeName, (route) => false),
                   );
                 } else {
+                  if (!mounted) return;
                   Navigator.pop(context);
                   Alerts.alertDialog(
                     context: context,

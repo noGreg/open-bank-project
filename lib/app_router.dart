@@ -5,7 +5,9 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'features/auth/screens/forgot_password_screen.dart';
 import 'features/auth/screens/login_screen.dart';
+import 'features/auth/screens/sign_up_screen.dart';
 import 'features/home/ui/screens/home_screen.dart';
 import 'features/home/ui/screens/profile_screen.dart';
 
@@ -20,10 +22,10 @@ class AppRouter {
         return _buildPage(const LoginScreen());
       case LoginScreen.routeName:
         return _buildPage(const LoginScreen());
-      // case SignUpScreen.routeName:
-      //   return _buildPage(const SignUpScreen());
-      // case ForgotPasswordScreen.routeName:
-      //   return _buildPage(const ForgotPasswordScreen());
+      case SignUpScreen.routeName:
+        return _buildPage(const SignUpScreen());
+      case ForgotPasswordScreen.routeName:
+        return _buildPage(const ForgotPasswordScreen());
       case HomeScreen.routeName:
         return _buildTabPage(const HomeScreen());
 

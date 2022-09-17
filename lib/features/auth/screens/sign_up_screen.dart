@@ -1,71 +1,69 @@
 import 'package:flutter/material.dart';
-import 'package:open_bank_project/core/constants/strings.dart';
 import 'package:open_bank_project/core/extensions/responsive.dart';
 import 'package:open_bank_project/core/extensions/validators.dart';
-import 'package:open_bank_project/core/theme/text_styles.dart';
-import 'package:open_bank_project/features/auth/screens/sign_up_screen.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/constants/strings.dart';
 import '../../../core/theme/input_decorations.dart';
+import '../../../core/theme/text_styles.dart';
 import '../../../core/utils/alerts.dart';
 import '../../../core/widgets/app_btn.dart';
 import '../../home/ui/screens/home_screen.dart';
 import '../bloc/login_bloc.dart';
+import '../bloc/signup_bloc.dart';
 import '../repositories/auth_repository_impl.dart';
 import '../widgets/google_auth_btn.dart';
-import 'forgot_password_screen.dart';
+import '../widgets/user_terms.dart';
+import 'login_screen.dart';
 
-class LoginScreen extends StatelessWidget {
-  const LoginScreen({Key? key}) : super(key: key);
-  static const String routeName = 'login_screen';
+class SignUpScreen extends StatelessWidget {
+  const SignUpScreen({Key? key}) : super(key: key);
+  static const String routeName = 'register_screen';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
-        child:
-
-            // SizedBox(
-            //   height: 100.h,
-            //   width: 100.w,
-            //   child: RegisterScreen(
-            //     providerConfigs: [
-            //       GoogleProviderConfiguration(
-            //         clientId:
-            //             "551970385340-nhcp7vqe8mejdqjbn17um3n9oplig1o3.apps.googleusercontent.com",
-            //       )
-            //     ],
-            //   ),
-            // ),
-            Column(
+        child: Column(
           children: [
             SizedBox(height: 113.dH),
-            Text(Strings.login, style: TextStyles.mainLabel),
+            Text(Strings.signUp, style: TextStyles.mainLabel),
             SizedBox(height: 21.dH),
             Container(
               padding: EdgeInsets.symmetric(horizontal: 90.dW),
               child: Text(
-                Strings.loginMsj,
+                Strings.signUpMsj,
                 style: TextStyles.text,
                 textAlign: TextAlign.center,
               ),
             ),
             SizedBox(height: 38.dH),
-            ChangeNotifierProvider(
-              create: (_) => LoginBloc(authRepository: AuthRepositoryImpl()),
-              child: const _LoginForm(),
+            MultiProvider(
+              providers: [
+                ChangeNotifierProvider(
+                  create: (_) =>
+                      SignUpBloc(authRepository: AuthRepositoryImpl()),
+                ),
+                ChangeNotifierProvider(
+                  create: (_) =>
+                      LoginBloc(authRepository: AuthRepositoryImpl()),
+                ),
+              ],
+              child: const _SignUpForm(),
             ),
+
+            // SizedBox(height: 19.dH),
             TextButton(
               onPressed: () {
                 Navigator.pushNamedAndRemoveUntil(
-                    context, SignUpScreen.routeName, (route) => false);
+                    context, LoginScreen.routeName, (route) => false);
               },
               child: RichText(
                 text: TextSpan(
-                  text: Strings.dontHaveAnAccount,
+                  text: Strings.alreadyhaveAnAccount,
                   children: [
                     TextSpan(
-                      text: Strings.signUp,
+                      text: Strings.login,
                       style: TextStyles.blueText.copyWith(fontSize: 16.fS),
                     ),
                   ],
@@ -80,74 +78,83 @@ class LoginScreen extends StatelessWidget {
   }
 }
 
-class _LoginForm extends StatelessWidget {
-  const _LoginForm({
+class _SignUpForm extends StatelessWidget {
+  const _SignUpForm({
     Key? key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final signUpBloc = context.watch<SignUpBloc>();
     final loginBloc = context.watch<LoginBloc>();
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 37.dW),
       child: Form(
-        key: loginBloc.formKey,
+        key: signUpBloc.formKey,
         child: Column(
           children: [
             TextFormField(
               keyboardType: TextInputType.emailAddress,
               decoration: InputDecorations.authInputDecoration(
+                hintText: Strings.hintFullName,
+                labelText: Strings.fullName,
+              ),
+              onChanged: (value) => signUpBloc.name = value,
+              validator: (name) => name!.isNameValid,
+            ),
+            SizedBox(height: 19.dH),
+            TextFormField(
+              autocorrect: false,
+              keyboardType: TextInputType.emailAddress,
+              decoration: InputDecorations.authInputDecoration(
                 hintText: Strings.hintEmail,
                 labelText: Strings.email,
               ),
-              onChanged: (value) => loginBloc.email = value,
+              onChanged: (value) => signUpBloc.email = value,
               validator: (email) => email!.isEmailValid,
             ),
-            SizedBox(height: 22.dH),
+            SizedBox(height: 19.dH),
             TextFormField(
-              obscureText: loginBloc.obscureText,
+              obscureText: signUpBloc.obscureText,
               keyboardType: TextInputType.visiblePassword,
               decoration: InputDecorations.authInputDecoration(
                 hintText: Strings.password,
                 labelText: Strings.password,
                 suffix: InkWell(
-                  onTap: () => loginBloc.toggleVisibility(),
-                  child: Icon(loginBloc.obscureText
+                  onTap: () => signUpBloc.toggleVisibility(),
+                  child: Icon(signUpBloc.obscureText
                       ? Icons.visibility
                       : Icons.visibility_off),
                 ),
               ),
-              onChanged: (value) => loginBloc.password = value,
+              onChanged: (value) => signUpBloc.password = value,
               validator: (password) => password!.isPasswordValid,
             ),
-            SizedBox(height: 49.dH),
-            InkWell(
-                onTap: () => Navigator.pushNamed(
-                    context, ForgotPasswordScreen.routeName),
-                child: Text(Strings.forgotPasswordBtn, style: TextStyles.text)),
+            SizedBox(height: 19.dH),
+            UserTerms(),
             SizedBox(height: 38.dH),
             AppBtn(
-              label: Strings.login,
-              onPressed: loginBloc.isLoading
+              label: Strings.signUp,
+              onPressed: signUpBloc.isLoading
                   ? null
                   : () async {
                       FocusScope.of(context).unfocus();
-                      if (!loginBloc.isValidForm()) return;
+                      if (!signUpBloc.isValidForm()) return;
                       final success =
-                          await context.read<LoginBloc>().onLoginRequest();
+                          await context.read<SignUpBloc>().onSignUpRequest();
                       if (success) {
                         Navigator.pushReplacementNamed(
                             context, HomeScreen.routeName);
                       } else {
                         Alerts.buildScaffoldMessenger(
-                            context: context, text: loginBloc.errorMsg);
+                            context: context, text: signUpBloc.errorMsg);
                       }
                     },
             ),
             SizedBox(height: 70.dH),
             GoogleAuthBtn(
               loginBloc: loginBloc,
-              label: Strings.loginWithGoogle,
+              label: Strings.signUpWithGoogle,
             ),
             SizedBox(height: 19.dH),
           ],

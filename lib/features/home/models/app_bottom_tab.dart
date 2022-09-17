@@ -1,0 +1,1 @@
+enum AppBottomTab { home, profile }

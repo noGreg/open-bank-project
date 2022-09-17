@@ -1,0 +1,90 @@
+import 'package:flutter/material.dart';
+import 'package:open_bank_project/core/extensions/responsive.dart';
+import 'package:provider/provider.dart';
+
+import '../../../../core/constants/strings.dart';
+import '../../../../core/theme/text_styles.dart';
+import '../../../../core/utils/alerts.dart';
+import '../../../../core/widgets/app_btn.dart';
+import '../../../../core/widgets/user_profile_image.dart';
+import '../../../auth/bloc/auth_bloc.dart';
+import '../../../auth/models/user.dart';
+import '../../../auth/screens/login_screen.dart';
+import '../widgets/bottom_tab_selector.dart';
+
+class ProfileScreen extends StatelessWidget {
+  const ProfileScreen({Key? key}) : super(key: key);
+  static const String routeName = 'profile_screen';
+
+  @override
+  Widget build(BuildContext context) {
+    const appUser = User(id: "id", name: "Juan", email: "juan_perez@gmail.com");
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Column(
+        children: [
+          SizedBox(height: 62.dH, width: double.infinity),
+          Text(
+            Strings.profile,
+            style: TextStyles.mainLabel.copyWith(fontSize: 20.fS),
+          ),
+          SizedBox(height: 49.dH),
+          const UserProfileImage(appUser: appUser),
+          SizedBox(height: 30.dH),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 30.dW),
+            child: Text(
+              appUser.name ?? " ",
+              style: TextStyles.mainLabel.copyWith(fontSize: 24.fS),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          Text(appUser.email ?? " ", style: TextStyles.blueText),
+          SizedBox(height: 90.dH),
+          AppBtn(
+            label: Strings.logout,
+            onPressed: () => Alerts.confirmDialog(
+              context: context,
+              title: Strings.logoutConfirmationMsg,
+              onYes: () async {
+                await context.read<AuthBloc>().logOut();
+                Navigator.pushNamedAndRemoveUntil(
+                    context, LoginScreen.routeName, (route) => false);
+              },
+            ),
+          ),
+          SizedBox(height: 18.dH),
+          AppBtn(
+            label: Strings.deleteAccount,
+            onPressed: () => Alerts.confirmDialog(
+              context: context,
+              title: Strings.deleteAccountConfirmationMsg,
+              onYes: () async {
+                final result = await context.read<AuthBloc>().deleteAccount();
+                if (result) {
+                  Navigator.pop(context);
+                  Alerts.alertDialog(
+                    context: context,
+                    content: Strings.deleteAccountSuccessMsg,
+                    onOk: () => Navigator.pushNamedAndRemoveUntil(
+                        context, LoginScreen.routeName, (route) => false),
+                  );
+                } else {
+                  Navigator.pop(context);
+                  Alerts.alertDialog(
+                    context: context,
+                    isSucccess: false,
+                    content: Strings.deleteAccountErrorMsg,
+                    onOk: () => Navigator.pushNamedAndRemoveUntil(
+                        context, LoginScreen.routeName, (route) => false),
+                  );
+                }
+              },
+            ),
+          ),
+        ],
+      ),
+      bottomNavigationBar: const BottomTabSelector(),
+    );
+  }
+}
